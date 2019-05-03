@@ -15,8 +15,12 @@
 }
 @property (nonatomic, assign) BOOL isAudio;
 @property (assign, nonatomic) NSString *camDirection;
+@property (assign, nonatomic) NSString *fileSrc;
 @property (assign, nonatomic) NSString *task;
 @property (assign, nonatomic) NSInteger flashModeValue;
 @property (strong,nonatomic) CDVMediaStream * mediaStreamInterface;
 - (BOOL)fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isDirectory;
+- (void)enableCapture;
+- (void)takeVideo;
+- (void)startRecording;
 @end

@@ -193,6 +193,9 @@
 {
     if (self.session) return;
 
+    // Initialize the capture queue
+    self.captureQueue = [[NSOperationQueue alloc] init];
+
     NSBlockOperation *operation = [self captureOperation];
     operation.completionBlock = ^{
         [self operationCompleted];
@@ -387,7 +390,7 @@
 
 - (void)takeVideo
 {
-    NSURL *outputURL = [self getStorageDirectory];
+    NSURL *outputURL = [[NSURL alloc] initWithString:self.fileSrc];
     __weak CameraViewController* weakSelf = self;
     [movieOutput startRecordingToOutputFileURL:outputURL recordingDelegate:weakSelf];
 
@@ -463,6 +466,29 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [self.mediaStreamInterface sendPluginResult:dict keepResult:NO];
 
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)startRecording
+{
+    if([self.task  isEqual: @"imageCapture"]){
+          [self takePicture];
+      }
+      else {
+          if(self.videoStarted == NO){
+            self.videoStarted = YES;
+
+            // fire the started event
+            NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+            [dict setObject:@"recording" forKey:@"state"];
+            [self.mediaStreamInterface sendPluginResult:dict keepResult:YES];
+
+            [self takeVideo];
+        }
+        else {
+            self.videoStarted = NO;
+            [movieOutput stopRecording];
+        }
+    }
 }
 
 
